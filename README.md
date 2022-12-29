@@ -39,7 +39,7 @@ to be able to get the script.
 
 --- Run the following command to get the script:
 
-git clone git@github.com:eladbe96/First-Engagement-script.git
+$ git clone git@github.com:eladbe96/First-Engagement-script.git
 
 --- For any issues, please reach me offline :)
 

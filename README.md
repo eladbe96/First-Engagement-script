@@ -12,4 +12,13 @@ To get the latest script, you can choose one of the following options:
 
 --- Generate the SSH key:
 
+[Expert@hostname:0]# ssh-keygen -t rsa
 
+--- Choose the location of the new key:
+
+    Enter file in which to save the key (/home/admin/.ssh/id_rsa): 
+    For example: 
+    Enter file in which to save the key (/home/admin/.ssh/id_rsa): /home/admin/ssh-git-key
+ 
+--- Skip all the next steps.
+--- 

@@ -4,6 +4,12 @@ Welcome to our First Engagement script GIT!
 
 Here you can find the latest version of our script + intersting information and updates.
 
+Important:
+
+For version managin, I have created a seperated branch called 'dev' letting you work on the script, updating, adding features, etc
+while protecting the original script's version.
+Make sure to work only on this specific branch.
+
 To get the latest script, you can choose one of the following options:
 
 1. Copy the script manually to a txt file.
@@ -12,7 +18,7 @@ To get the latest script, you can choose one of the following options:
 
 --- Generate the SSH key:
 
-[Expert@hostname:0]# ssh-keygen -t rsa
+    [Expert@hostname:0]# ssh-keygen -t rsa
 
 --- Choose the location of the new key:
 
@@ -21,4 +27,18 @@ To get the latest script, you can choose one of the following options:
     Enter file in which to save the key (/home/admin/.ssh/id_rsa): /home/admin/ssh-git-key
  
 --- Skip all the next steps.
---- 
+--- Browse to the locaiton of your SSH-Key, and do #cat to your ssh-key.pub:
+
+    For example:
+    [Expert@hostname:0]# cd /home/admin/
+    [Expert@hostname:0]# cat ssh-git-key.pub
+    
+    ssh-rsa################ USER_ID@hostname
+    
+--- Share the content of your public key with me, and I wil make sure to add you to this repository collaborators list
+to be able to get the script.
+
+--- For any issues, please reach me offline :)
+
+
+

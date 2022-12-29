@@ -1,14 +1,44 @@
-Hey Guys,
+# First-Engagement-script
 
-Below you can find the template for our customer, before sharing this script:
+Welcome to our First Engagement script GIT!
 
-In addition to the above, we would like to collect additional information and outputs to have a better understanding of the issue and to make an offline investigation.
-Therefore, we have created a dedicated script, called First_Engagement_script.sh to simplify the logs’ collection procedure.
-This is an interactive script, which allows us to collect the information we need for our investigation, divided by categories.
-For our issue, please make sure to choose option <1/2/3>.
+Here you can find the latest version of our script + intersting information and updates.
 
-Note: The script will take CPInfo/HCP in the background(according to the user’s input) and thus, it might take a few minutes to complete the collection of the logs.
-Note: The script will not perform any debugs, and thus there is no business impact using this script, as it only generates general logs and information(To get more information, please run #cat First_Engagement_script.sh)
+Important:
 
-Once the script was completed, the system will print the location of all the files, which is under ‘/var/log/FE_Files’.
-Please make sure to upload the content of the directory for our analysis.
+For version managin, I have created a seperated branch called 'dev' letting you work on the script, updating, adding features, etc
+while protecting the original script's version.
+Make sure to work only on this specific branch.
+
+To get the latest script, you can choose one of the following options:
+
+1. Copy the script manually to a txt file.
+
+2. Generate an SSH-key to be able 'clone' the script directly to your GW.
+
+--- Generate the SSH key:
+
+    [Expert@hostname:0]# ssh-keygen -t rsa
+
+--- Choose the location of the new key:
+
+    Enter file in which to save the key (/home/admin/.ssh/id_rsa): 
+    For example: 
+    Enter file in which to save the key (/home/admin/.ssh/id_rsa): /home/admin/ssh-git-key
+ 
+--- Skip all the next steps.
+--- Browse to the locaiton of your SSH-Key, and do #cat to your ssh-key.pub:
+
+    For example:
+    [Expert@hostname:0]# cd /home/admin/
+    [Expert@hostname:0]# cat ssh-git-key.pub
+    
+    ssh-rsa################ USER_ID@hostname
+    
+--- Share the content of your public key with me, and I wil make sure to add you to this repository collaborators list
+to be able to get the script.
+
+--- For any issues, please reach me offline :)
+
+
+

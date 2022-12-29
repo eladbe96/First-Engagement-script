@@ -26,29 +26,20 @@ To get the latest script, you can choose one of the following options:
 --- Generate an SSH key:
 
     [Expert@hostname:0]# ssh-keygen -t rsa
-
---- Choose the location of the new key:
-
-    Enter file in which to save the key (/home/admin/.ssh/id_rsa): 
-    
-    For example: 
-    
-    Enter file in which to save the key (/home/admin/.ssh/id_rsa): /home/admin/ssh-git-key
  
 --- Skip all the next steps.
 
---- Browse to the locaiton of your SSH-Key, and do #cat to your ssh-key.pub:
-
-    For example:
-    [Expert@hostname:0]# cd /home/admin/
-    [Expert@hostname:0]# cat ssh-git-key.pub
-    
-    ssh-rsa################ USER_ID@hostname
+--- The location of your key will be prompted by the above command.
+--- The command will create 2 different keys:
+    private-key: id_rsa
+    public-key: id_rsa.pub
     
 --- Share the content of your public key with me, and I wil make sure to add you to this repository collaborators list
 to be able to get the script.
 
 --- Run the following command to get the script:
+
+ ```git clone git@github.com:eladbe96/First-Engagement-script.git```
 
 --- For any issues, please reach me offline :)
 

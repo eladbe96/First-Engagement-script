@@ -1,0 +1,12 @@
+Adding to the Performance related test:
+
+A.   fw ctl multik print_heavy_conn > heavy-conns.txt - will show any heavy connections detected in the last 24 hours 
+       B.   fw ctl multik dynamic_dispatching get_mode > dispatcher-stat.txt - will check the status of dynamic dispatcher (sk105261)
+       C.   fw ctl multik utilize > corexl-util.txt - to see the instances utilization. 
+       D.  fw tab -t connections -z -u > slow_path_conns.txt
+       E.   fwaccel conns > SXL_conns.txt
+       F.   fw_mux all > mux_dbg                                   
+7.   The output of the following commands, to see if this is a kernel-mode or user-space firewall:
+       A.   cpprod_util FwIsUsermode
+       B.   cpprod_util FwIsUsfwMachine
+       C.   ps aux | grep fwk

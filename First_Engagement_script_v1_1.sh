@@ -121,7 +121,9 @@ function crash_files {
     fi
     if [[ $checker == 0 ]]; then
         printf "${RED}The system didn't find any crash files${clear}\n"
-    fi
+	else
+		printf "${GREEN}Crash files were collected${clear}\n"
+	fi
     }
 
 #Cheking if the folder exist, if not, creating it:

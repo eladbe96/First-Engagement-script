@@ -10,15 +10,25 @@ BLUE='\033[0;34m'
 YELLOW='\033[0;33m'
 clear='\033[0m'
 
-printf "${GREEN}####################################################################${clear}\n"
-printf "${RED}########Hello $(whoami)#################################################${clear}\n"
-printf "${RED}########Welcome to First Engagement Check Point script##############${clear}\n"
-printf "${GREEN}####################################################################${clear}\n\n"
+printf "${GREEN}#####################################################################${clear}\n"
+printf "${RED}#                            Hello $(whoami)                            #${clear}\n"
+printf "${RED}#          Welcome to First Engagement Check Point script           #${clear}\n"
+printf "${GREEN}#####################################################################${clear}\n\n"
 #Creating the needed vars:
 OutboundDir=/var/log/FE_Files
 HCP=$OutboundDir/hcp_results
 CRASH_OUTPUTS=$OutboundDir/crash_info.log
 
+
+function die_sig {
+       tput cnorm
+	   printf "${clear}"
+	   printf "\n"
+       exit 0
+}
+trap 'die_sig "SIGINT"' SIGINT
+trap 'die_sig "SIGQUIT"' SIGQUIT
+trap 'die_sig "SIGTERM"' SIGTERM
 
 function compress {
     tar -czvf $OutboundDir/$(hostname)_First_Engagement_Last_Run_$(date +"%d-%m-%Y").tgz $OutboundDir/* >/dev/null 2>&1 &
@@ -31,16 +41,10 @@ spinner() {
     local delay="0.5"
     tput civis  # hide cursor
     while [ -d /proc/$PROC ]; do
-		printf "${GREEN}"
-        printf '\033[s\033[u[ / ] %s\033[u' "Collecting $str"; sleep "$delay"
-		printf "${clear}"
-		printf "${BLUE}"
-        printf '\033[s\033[u[ — ] %s\033[u' "Collecting $str"; sleep "$delay"
-        printf "${clear}"
 		printf "${RED}"
+        printf '\033[s\033[u[ / ] %s\033[u' "Collecting $str"; sleep "$delay"
+        printf '\033[s\033[u[ — ] %s\033[u' "Collecting $str"; sleep "$delay"
 		printf '\033[s\033[u[ \ ] %s\033[u' "Collecting $str"; sleep "$delay"
-		printf "${clear}"
-		printf "${YELLOW}"
         printf '\033[s\033[u[ | ] %s\033[u' "Collecting $str"; sleep "$delay"
 		printf "${clear}"
     done

@@ -124,27 +124,33 @@ function additional_performance_files {
     printf "${GREEN}[V] Performance related logs were collected${clear}\n"
     }
 
-function crash_files {				  
+function crash_files {
+	checker=0
     printf "${RED}Checking for Crash files${clear}\n"					   
     OUTPUT=$(ls -lsA /var/log/crash/ | wc -l)
     if [[ $OUTPUT -ge 2 ]]; then
         echo "/var/log/crash/:" >> $CRASH_OUTPUTS
         ls -lsA /var/log/crash/ >> $CRASH_OUTPUTS
         OUTPUT=$(ls -lsA /var/crash/ | wc -l)
+		checker=1
     fi
     if [[ $OUTPUT -ge 2 ]]; then
         echo "/var/crash/:" >> $CRASH_OUTPUTS
         ls -lsA /var/crash/ >> $CRASH_OUTPUTS
         OUTPUT=$(ls -lsA /var/log/dump/usermode/ | wc -l)
+		checker=1
     fi
     if [[ $OUTPUT -ge 2 ]]; then
         echo "/var/log/dump/usermode/:" >> $CRASH_OUTPUTS
         ls -lsA /var/log/dump/usermode/ >> $CRASH_OUTPUTS
         tar -czvf $CRASH_OUTPUTS/$(hostname)_$(date +"%d-%m-%Y")_crash_files /var/log/dump/usermode/*  > /dev/null 2>&1
+		checker=1
     fi
-    if [[ $CRASH_OUTPUTS == 0 ]]; then
+    if [[ $checker == 0 ]]; then
         printf "${RED}The system didn't find any crash files${clear}\n"
-    fi
+	else
+		printf "${GREEN}Crash files were collected${clear}\n"
+	fi
     }
 
 

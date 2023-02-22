@@ -29,7 +29,7 @@ TYPE=$(cpstat os | grep "Appliance Name" | tr -s ' ' | cut -c 17-)
 
 if [ $VSX == '1' ]; then
 	VSX="Yes"
-	echo $VSX
+	echo "VSX:" $VSX
 fi
 
 echo "User:" $USER

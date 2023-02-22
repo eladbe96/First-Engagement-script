@@ -29,7 +29,7 @@ TYPE=$(cpstat os | grep "Appliance Name" | tr -s ' ' | cut -c 17-)
 
 if [ $VSX == '1' ]; then
 	VSX="Yes"
-	echo $VSX
+	echo "VSX:" $VSX
 fi
 
 echo "User:" $USER
@@ -124,37 +124,26 @@ function additional_performance_files {
     printf "${GREEN}[V] Performance related logs were collected${clear}\n"
     }
 
-<<<<<<< HEAD
 function crash_files {
 	checker=0
-=======
-function crash_files {				  
->>>>>>> 799e3f41d369d86c688dad6ad9f41c707898e5d2
     printf "${RED}Checking for Crash files${clear}\n"					   
     OUTPUT=$(ls -lsA /var/log/crash/ | wc -l)
     if [[ $OUTPUT -ge 2 ]]; then
         echo "/var/log/crash/:" >> $CRASH_OUTPUTS
         ls -lsA /var/log/crash/ >> $CRASH_OUTPUTS
         OUTPUT=$(ls -lsA /var/crash/ | wc -l)
-<<<<<<< HEAD
 		checker=1
-=======
->>>>>>> 799e3f41d369d86c688dad6ad9f41c707898e5d2
     fi
     if [[ $OUTPUT -ge 2 ]]; then
         echo "/var/crash/:" >> $CRASH_OUTPUTS
         ls -lsA /var/crash/ >> $CRASH_OUTPUTS
         OUTPUT=$(ls -lsA /var/log/dump/usermode/ | wc -l)
-<<<<<<< HEAD
 		checker=1
-=======
->>>>>>> 799e3f41d369d86c688dad6ad9f41c707898e5d2
     fi
     if [[ $OUTPUT -ge 2 ]]; then
         echo "/var/log/dump/usermode/:" >> $CRASH_OUTPUTS
         ls -lsA /var/log/dump/usermode/ >> $CRASH_OUTPUTS
         tar -czvf $CRASH_OUTPUTS/$(hostname)_$(date +"%d-%m-%Y")_crash_files /var/log/dump/usermode/*  > /dev/null 2>&1
-<<<<<<< HEAD
 		checker=1
     fi
     if [[ $checker == 0 ]]; then
@@ -162,12 +151,6 @@ function crash_files {
 	else
 		printf "${GREEN}Crash files were collected${clear}\n"
 	fi
-=======
-    fi
-    if [[ $CRASH_OUTPUTS == 0 ]]; then
-        printf "${RED}The system didn't find any crash files${clear}\n"
-    fi
->>>>>>> 799e3f41d369d86c688dad6ad9f41c707898e5d2
     }
 
 

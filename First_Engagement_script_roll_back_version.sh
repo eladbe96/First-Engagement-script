@@ -2,6 +2,7 @@
 unset TMOUT
 clear
 
+set -o posix
 #Setting the colours VARS:
 GREEN='\033[0;32m'
 GREEN_B='\e[1;32m'
@@ -28,8 +29,8 @@ VSX=$(cpprod_util fwisvsx)
 TYPE=$(cpstat os | grep "Appliance Name" | tr -s ' ' | cut -c 17-)
 
 if [ $VSX == '1' ]; then
-	VSX="Yes"
-	echo "VSX:" $VSX
+	VSX_CHECK="Yes"
+	echo "VSX:" $VSX_CHECK
 fi
 
 echo "User:" $USER
@@ -51,12 +52,6 @@ trap 'die_sig "SIGTERM"' SIGTERM
 
 
 
-
-function compress {
-    tar -czvf $OutboundDir/$(hostname)_First_Engagement_Last_Run_$(date +"%d-%m-%Y").tgz $OutboundDir/* >/dev/null 2>&1 &
-}
-
-
 spinner() {
     local PROC="$1"
     local str="$2"
@@ -64,15 +59,32 @@ spinner() {
     tput civis  # hide cursor
     while [ -d /proc/$PROC ]; do
 		printf "${RED}"
-        printf '\033[s\033[u[ / ] %s\033[u' "Collecting $str"; sleep "$delay"
-        printf '\033[s\033[u[ — ] %s\033[u' "Collecting $str"; sleep "$delay"
-		printf '\033[s\033[u[ \ ] %s\033[u' "Collecting $str"; sleep "$delay"
-        printf '\033[s\033[u[ | ] %s\033[u' "Collecting $str"; sleep "$delay"
-		printf "${clear}"
+		if [[ $str == "compressing" ]]; then
+			printf '\033[s\033[u[ / ] %s\033[u' "Please wait while $str"; sleep "$delay"
+			printf "${clear}"
+		else
+			printf '\033[s\033[u[ / ] %s\033[u' "Collecting $str"; sleep "$delay"
+			printf '\033[s\033[u[ — ] %s\033[u' "Collecting $str"; sleep "$delay"
+			printf '\033[s\033[u[ \ ] %s\033[u' "Collecting $str"; sleep "$delay"
+			printf '\033[s\033[u[ | ] %s\033[u' "Collecting $str"; sleep "$delay"
+			printf "${clear}"
+		fi
     done
+	
+	
     printf '\033[s\033[u%*s\033[u\033[0m' $((${#str}+6)) " " >/dev/null 2>&1 # return to normal
     tput cnorm  # restore cursor
-    printf "${GREEN_B}[V] $str was collected ${clear}\n"
+	
+	if [[ $str == "compressing" ]]; then
+		printf "${GREEN_B}[V] Collected files were compressed ${clear}\n"
+	else
+		printf "${GREEN_B}[V] $str was collected ${clear}\n"
+	fi
+}
+
+function compress {
+    tar -czvf $OutboundDir/$(hostname)_First_Engagement_Last_Run_$(date +"%d-%m-%Y").tgz $OutboundDir/* >/dev/null 2>&1 &
+	spinner $! compressing
 }
 
 function collect_CPinfo {												
@@ -113,9 +125,19 @@ function additional_performance_files {
     fw tab -t connections -u > $OutboundDir/conntable_$(date +"%d-%m-%Y").log
     printf "${RED}Collecting SXL Statistics . . .${clear}\n"
     fwaccel stats -s > $OutboundDir/accel_stats_$(date +"%d-%m-%Y").log
-    printf "${RED}Collecting affinity information . . .${clear}\n"
-    fw ctl affinity -l -a -r > $OutboundDir/affinity_$(date +"%d-%m-%Y").log
-    printf "${RED}Collecting CoreXL statistics. . .${clear}\n"
+	if [[ $VS == 0 ]]; then
+		printf "${RED}Collecting affinity information . . .${clear}\n"
+		fw ctl affinity -l -a -r > $OutboundDir/affinity_$(date +"%d-%m-%Y").log
+		printf "${RED}Collecting CoreXL statistics. . .${clear}\n"
+	else
+		
+		nohup vsenv 0 > /dev/null 2>&1 &
+		printf "${RED}Collecting affinity information . . .${clear}\n"
+		fw ctl affinity -l -a -r > $OutboundDir/affinity_$(date +"%d-%m-%Y").log
+		printf "${RED}Collecting CoreXL statistics. . .${clear}\n"
+		nohup vsenv $VS > /dev/null 2>&1 &
+		
+	fi
     fw ctl multik print_heavy_conn > $OutboundDir/heavy_conns_$(date +"%d-%m-%Y").log
     fw ctl multik utilize > $OutboundDir/instance_util_$(date +"%d-%m-%Y").log
 	fw ctl multik dynamic_dispatching get_mode > $OutboundDir/dispatcher-stat_$(date +"%d-%m-%Y").log	
@@ -211,7 +233,7 @@ fi
 
 printf "Please choose what should be collected:\n"
 PS3="Please enter your choice:"
-options=("Full Package (HCP, CPInfo, CPViewDB)" "Performace-related issues (Including option #1) and additional performance logs" "Crash files (Including option #1)" "sp_maestro(including HCP)" "Quit")
+options=("Full Package (HCP, CPInfo, CPViewDB)" "Performace logs (Including option #1)" "Crash files (Including option #1)" "sp_maestro(including HCP)" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
@@ -220,8 +242,8 @@ do
             Package=1
             break
             ;;
-        "Performace-related issues (Including option #1) and additional performance logs")
-            echo -e "you chose 2 - Performace-related issues (Including option #1) and additional performance logs\n \nThe system will collect the following files: ${GREEN}\n1) cpinfo -d -D -z\n2) hcp -r all \n3) /var/log/spike_detective/* \n4) connections table \n5) SXL and CoreXL Statistics${clear}\n\n"
+        "Performace logs (Including option #1)")
+            echo -e "you chose 2 - Performace logs (Including option #1)\n \nThe system will collect the following files: ${GREEN}\n1) cpinfo -d -D -z\n2) hcp -r all \n3) /var/log/spike_detective/* \n4) connections table \n5) SXL and CoreXL Statistics${clear}\n\n"
             Package=2
             break
             ;;
@@ -246,7 +268,36 @@ do
     esac
 done
 
-
+if [ $VSX == '1' ]; then
+	source /etc/profile.d/vsenv.sh
+	VSs=$(netns list)
+	VSs_ARR=($VSs)
+	counter=1
+	checker=0
+	while [[ $checker == 0 ]]; do
+	
+		printf "On which VS you would like to collect your files?\nPlease specifiy the VS ID\n"
+		for ((i = 0; i < ${#VSs_ARR[*]}; i++ )); do
+			echo $counter")" ${VSs_ARR[$i]}
+			let counter++
+		done
+		read VS
+		echo "You choose " $VS
+		for ((i = 0; i < ${#VSs_ARR[*]}; i++ )); do
+			if [[ ${VSs_ARR[$i]} = $VS ]]; then
+				echo "Moving to " $VS
+				vsenv $VS
+				checker=1
+			fi
+		done
+		echo ""
+		if [[ $checker == 0 ]]; then
+			echo -e "This VS " $VS "doesn't exist\nPlease choose one of the listed VSs\n"
+			counter=1
+		fi
+	done
+export VS
+fi
 echo "Please choose Yes or No if you wish to proceed:"
 proceed=("Yes" "No")
 select opt in "${proceed[@]}"
@@ -264,6 +315,8 @@ do
 	  	;;
 	  esac
 done
+
+
 if [[ $Package == "1" ]] && [[ $Choose == "1" ]]; then
     clear
 	collect_CPinfo

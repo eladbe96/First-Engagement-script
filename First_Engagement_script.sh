@@ -44,6 +44,12 @@ function die_sig {
        tput cnorm
 	   printf "${clear}"
 	   printf "\n"
+<<<<<<< HEAD
+	   if [ -d "$OutboundDir" ]; then
+		rm -r $OutboundDir
+	   fi
+=======
+>>>>>>> main
        exit 0
 }
 trap 'die_sig "SIGINT"' SIGINT
@@ -83,6 +89,23 @@ spinner() {
 }
 
 function compress {
+<<<<<<< HEAD
+
+    tar -czvf $PATH_USER/$(hostname)_First_Engagement_Last_Run_$(date +"%d-%m-%Y").tgz $OutboundDir/* >/dev/null 2>&1 &
+	spinner $! compressing
+	rm -r $OutboundDir
+
+}
+
+function collect_CPinfo {	
+	if [ $VSX == '1' ]; then	
+		nohup cpinfo -d -D -z -o $OutboundDir/VS${VS}/$(hostname)_$(date +"%d-%m-%Y").info >/dev/null 2>&1 &
+		spinner $! CPInfo
+	else
+		nohup cpinfo -d -D -z -o $OutboundDir/$(hostname)_$(date +"%d-%m-%Y").info >/dev/null 2>&1 &
+		spinner $! CPInfo
+		fi
+=======
     tar -czvf $OutboundDir/$(hostname)_First_Engagement_Last_Run_$(date +"%d-%m-%Y").tgz $OutboundDir/* >/dev/null 2>&1 &
 	spinner $! compressing
 }
@@ -90,6 +113,7 @@ function compress {
 function collect_CPinfo {												
     nohup cpinfo -d -D -z -o $OutboundDir/$(hostname)_$(date +"%d-%m-%Y").info >/dev/null 2>&1 &
 	spinner $! CPInfo
+>>>>>>> main
 }
 
 function collect_HCP {    												
@@ -119,12 +143,43 @@ function collect_Spike_Detective {
 	printf "${GREEN}[V]Spike_Detective was collected${clear}\r\n"
     }
 
+<<<<<<< HEAD
+function additional_performance_files {
+if [ $VSX == '1' ]; then	
+    printf "${RED}Collecting Connections table . . .${clear}\n"
+    fw tab -t connections -z -u > $OutboundDir/VS${VS}/conntable_reason_$(date +"%d-%m-%Y").log
+    fw tab -t connections -u > $OutboundDir/VS${VS}/conntable_$(date +"%d-%m-%Y").log
+    printf "${RED}Collecting SXL Statistics . . .${clear}\n"
+    fwaccel stats -s > $OutboundDir/VS${VS}/accel_stats_$(date +"%d-%m-%Y").log
+    fw ctl multik print_heavy_conn > $OutboundDir/VS${VS}/heavy_conns_$(date +"%d-%m-%Y").log
+    fw ctl multik utilize > $OutboundDir/VS${VS}/instance_util_$(date +"%d-%m-%Y").log
+	fw ctl multik dynamic_dispatching get_mode > $OutboundDir/VS${VS}/dispatcher-stat_$(date +"%d-%m-%Y").log	
+	printf "${RED}Collecting mux information statistics. . .${clear}\n"
+	fw_mux all > $OutboundDir/VS${VS}/fw_mux_$(date +"%d-%m-%Y").log	
+    printf "${GREEN}[V] Performance related logs were collected${clear}\n"
+	printf "${RED}Collecting fwk logs. . .${clear}\n"
+	tar -czvf $OutboundDir/VS${VS}/fwk_logs_$(date +"%d-%m-%Y").tgz /opt/CPsuite-R81.10/fw1/CTX/CTX00001/log/fwk* > /dev/null 2>&1
+    printf "${GREEN}[V] fwk logs were collected${clear}\n"
+	if [[ $VS == 0 ]]; then
+		printf "${RED}Collecting affinity information . . .${clear}\n"
+		fw ctl affinity -l -a -r > $OutboundDir/VS${VS}/affinity_$(date +"%d-%m-%Y").log
+		printf "${RED}Collecting CoreXL statistics. . .${clear}\n"
+	fi
+else
+	printf "${RED}Collecting Connections table . . .${clear}\n"
+=======
 function additional_performance_files {															  
     printf "${RED}Collecting Connections table . . .${clear}\n"
+>>>>>>> main
     fw tab -t connections -z -u > $OutboundDir/conntable_reason_$(date +"%d-%m-%Y").log
     fw tab -t connections -u > $OutboundDir/conntable_$(date +"%d-%m-%Y").log
     printf "${RED}Collecting SXL Statistics . . .${clear}\n"
     fwaccel stats -s > $OutboundDir/accel_stats_$(date +"%d-%m-%Y").log
+<<<<<<< HEAD
+    printf "${RED}Collecting affinity information . . .${clear}\n"
+    fw ctl affinity -l -a -r > $OutboundDir/affinity_$(date +"%d-%m-%Y").log
+    printf "${RED}Collecting CoreXL statistics. . .${clear}\n"
+=======
 	if [[ $VS == 0 ]]; then
 		printf "${RED}Collecting affinity information . . .${clear}\n"
 		fw ctl affinity -l -a -r > $OutboundDir/affinity_$(date +"%d-%m-%Y").log
@@ -138,12 +193,23 @@ function additional_performance_files {
 		nohup vsenv $VS > /dev/null 2>&1 &
 		
 	fi
+>>>>>>> main
     fw ctl multik print_heavy_conn > $OutboundDir/heavy_conns_$(date +"%d-%m-%Y").log
     fw ctl multik utilize > $OutboundDir/instance_util_$(date +"%d-%m-%Y").log
 	fw ctl multik dynamic_dispatching get_mode > $OutboundDir/dispatcher-stat_$(date +"%d-%m-%Y").log	
 	printf "${RED}Collecting mux information statistics. . .${clear}\n"
 	fw_mux all > $OutboundDir/fw_mux_$(date +"%d-%m-%Y").log	
     printf "${GREEN}[V] Performance related logs were collected${clear}\n"
+<<<<<<< HEAD
+	if [ $(cpprod_util FwIsUsermode) == 1 ]; then
+		printf "${RED}Collecting fwk logs. . .${clear}\n"
+		tar -czvf $OutboundDir/VS${VS}/fwk_logs_$(date +"%d-%m-%Y").tgz /opt/CPsuite-R81.10/fw1/CTX/CTX00001/log/fwk* > /dev/null 2>&1
+		printf "${GREEN}[V] fwk logs were collected${clear}\n"
+	fi
+
+fi
+=======
+>>>>>>> main
     }
 
 function crash_files {
@@ -233,12 +299,21 @@ fi
 
 printf "Please choose what should be collected:\n"
 PS3="Please enter your choice:"
+<<<<<<< HEAD
+options=("Basic Package (HCP, CPInfo, CPViewDB)" "Performace logs (Including option #1)" "Crash files (Including option #1)" "sp_maestro(including HCP)" "Quit")
+select opt in "${options[@]}"
+do
+    case $opt in
+        "Basic Package (HCP, CPInfo, CPViewDB)")
+            printf "you chose 1 - Basic Package (HCP, CPInfo, CPViewDB)\n \nThe system will collect the following files: ${GREEN}\n1) cpinfo -d -D -z \n2) hcp -r all${clear}\n\n"
+=======
 options=("Full Package (HCP, CPInfo, CPViewDB)" "Performace logs (Including option #1)" "Crash files (Including option #1)" "sp_maestro(including HCP)" "Quit")
 select opt in "${options[@]}"
 do
     case $opt in
         "Full Package (HCP, CPInfo, CPViewDB)")
             printf "you chose 1 - Full Package (HCP, CPInfo, CPViewDB)\n \nThe system will collect the following files: ${GREEN}\n1) cpinfo -d -D -z \n2) hcp -r all${clear}\n\n"
+>>>>>>> main
             Package=1
             break
             ;;
@@ -272,6 +347,40 @@ if [ $VSX == '1' ]; then
 	source /etc/profile.d/vsenv.sh
 	VSs=$(netns list)
 	VSs_ARR=($VSs)
+<<<<<<< HEAD
+	checker=0
+	for ((i = 0; i < ${#VSs_ARR[*]}; i++ )); do
+		mkdir $OutboundDir/VS${VSs_ARR[$i]}
+	done
+	counter=1
+
+printf "The script collecting information from VS0 by default.\non which VS you would like to collect your files?\nIf you whish to collect from VS0 only, please type 'skip'(lowercase)\n"
+	while [[ $checker == 0 ]]; do
+
+#Printing all the VSs:
+		for ((i = 1; i < ${#VSs_ARR[*]}; i++ )); do
+			echo $counter") VS"${VSs_ARR[$i]}
+			let counter++
+		done
+		printf "Please specifiy the VS ID: "
+		read VS
+#Checking the user's input:
+		if [[ $VS == "skip" ]]; then
+			checker=1
+			VS=0
+			echo "You choose to" $VS
+		else
+			echo "You choose " $VS
+			for ((i = 1; i < ${#VSs_ARR[*]}; i++ )); do
+				if [[ ${VSs_ARR[$i]} = $VS ]]; then
+					echo "Moving to "$VS
+					vsenv $VS
+					checker=1
+				fi
+			done
+			echo ""
+		fi
+=======
 	counter=1
 	checker=0
 	while [[ $checker == 0 ]]; do
@@ -291,6 +400,7 @@ if [ $VSX == '1' ]; then
 			fi
 		done
 		echo ""
+>>>>>>> main
 		if [[ $checker == 0 ]]; then
 			echo -e "This VS " $VS "doesn't exist\nPlease choose one of the listed VSs\n"
 			counter=1
@@ -316,6 +426,147 @@ do
 	  esac
 done
 
+<<<<<<< HEAD
+if [[ $Choose == "1" ]]; then
+	checker=0
+	printf "\nPlease choose where you whish to save the files(Please provide a full PATH_USER)\nFor example: /var/log\nNote: No need to add closing parenthesis\n"
+	while [[ $checker == 0 ]]; do
+		read PATH_USER
+		if [[ ${PATH_USER: -1} == "/" ]]; then
+			echo -e "This path" $PATH_USER "ends with closing parenthesis\nPlease provide a valid path\n"
+		elif [[ -d $PATH_USER ]]; then
+			echo -e "The files will be saved under: " $PATH_USER
+			export PATH_USER
+			checker=1
+			sleep 2
+		else
+			echo -e "This path" $PATH_USER "doesn't exist\nPlease provide a valid path\n"
+		fi
+	done
+fi
+if [[ $Package == "1" ]] && [[ $Choose == "1" ]]; then
+	if [ $VSX == '1' ]; then
+		if [ $VS != '0' ]; then
+			clear
+			collect_CPinfo
+			printf "Moving back to VS0\n"
+			vsenv 0
+			VS=0
+			collect_HCP
+			collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+		elif [ $VS == '0' ]; then
+			clear
+			collect_HCP
+			collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+		fi
+	else
+			clear
+			collect_HCP
+			collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+	fi
+
+elif [[ $Package == "2" ]] && [[ $Choose == "1" ]]; then
+	if [ $VSX == '1' ]; then
+		if [ $VS != '0' ]; then
+			clear
+			collect_Spike_Detective
+			additional_performance_files
+			#collect_CPinfo
+			printf "Moving back to VS0\n"
+			vsenv 0
+			VS=0
+			additional_performance_files
+			#collect_HCP_Performance
+			#collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+		elif [ $VS == '0' ]; then
+			clear
+			collect_Spike_Detective
+			additional_performance_files
+			collect_HCP_Performance
+			collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run' \nThank you for using the First Engagement Check Point script"
+		fi
+	else
+		clear
+		collect_Spike_Detective
+		additional_performance_files
+		collect_HCP_Performance
+		collect_CPinfo
+		compress
+		echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run' \nThank you for using the First Engagement Check Point script"
+	fi
+
+elif [[ $Package == "3" ]] && [[ $Choose == "1" ]]; then
+	if [ $VSX == '1' ]; then
+		if [ $VS != '0' ]; then
+			clear
+			collect_CPinfo
+			printf "Moving back to VS0\n"
+			vsenv 0
+			VS=0
+			crash_files
+			collect_HCP
+			collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+		elif [ $VS == '0' ]; then
+			clear
+			crash_files
+			collect_HCP
+			collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+		fi
+	else
+		clear
+		crash_files
+		collect_HCP
+		collect_CPinfo
+		compress
+		echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+	fi
+elif [[ $Package == "4" ]] && [[ $Choose == "1" ]]; then
+	if [ $VSX == '1' ]; then
+		if [ $VS != '0' ]; then
+			clear
+			collect_CPinfo
+			printf "Moving back to VS0\n"
+			vsenv 0
+			VS=0
+			sp_maestro
+			collect_HCP
+			collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+		elif [ $VS == '0' ]; then
+			clear
+			sp_maestro
+			collect_HCP
+			collect_CPinfo
+			compress
+			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+		fi
+	else
+		clear
+		sp_maestro
+		collect_HCP
+		collect_CPinfo
+		compress
+		echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
+	fi
+else
+   echo 'Thank you for using the First Engagement Check Point script'
+   rm -r $OutboundDir
+=======
 
 if [[ $Package == "1" ]] && [[ $Choose == "1" ]]; then
     clear
@@ -350,4 +601,5 @@ elif [[ $Package == "4" ]] && [[ $Choose == "1" ]]; then
 	
 else
    echo 'Thank you for using the First Engagement Check Point script'
+>>>>>>> main
 fi

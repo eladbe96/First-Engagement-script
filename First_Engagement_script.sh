@@ -477,13 +477,13 @@ elif [[ $Package == "2" ]] && [[ $Choose == "1" ]]; then
 			clear
 			collect_Spike_Detective
 			additional_performance_files
-			#collect_CPinfo
+			collect_CPinfo
 			printf "Moving back to VS0\n"
 			vsenv 0
 			VS=0
 			additional_performance_files
-			#collect_HCP_Performance
-			#collect_CPinfo
+			collect_HCP_Performance
+			collect_CPinfo
 			compress
 			echo -e "\nYour outputs can be found under $PATH_USER with the name 'First_Engagement_Last_Run'\nThank you for using the First Engagement Check Point script"
 		elif [ $VS == '0' ]; then

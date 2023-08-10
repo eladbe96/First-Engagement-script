@@ -576,10 +576,10 @@ if [[ $Package == "1" ]] && [[ $Choose == "1" ]]; then
     
 elif [[ $Package == "2" ]] && [[ $Choose == "1" ]]; then
     clear
-	collect_CPinfo
-    collect_HCP_Performance
+    additional_performance_files
     collect_Spike_Detective
-	additional_performance_files
+    collect_HCP_Performance
+    collect_CPinfo	
     compress
     echo -e "\nYour outputs can be found under  $OutboundDir \nThank you for using the First Engagement Check Point script"
 
